@@ -1,0 +1,16 @@
+# Environments 
+.env 
+.venv 
+env/ 
+venv/ 
+ENV/ 
+env.bak/ 
+venv.bak/ 
+
+.venv/
+trash
+*.log
+*.pyc
+*Extraction*.png
+__pycache__
+**/__pycache__/
