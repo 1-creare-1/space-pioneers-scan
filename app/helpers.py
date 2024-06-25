@@ -5,6 +5,7 @@ import enum
 import pydirectinput
 import time
 from fuzzywuzzy import fuzz
+import logging
 
 pydirectinput.PAUSE = 0
 
@@ -79,29 +80,40 @@ def ExtractValue(text: str, key: str):
 
 
 def StripToNumber(raw_text: str):
-    # TODO: Fix me parsing bad
+    # # TODO: Fix me parsing bad
+    # if raw_text == None:
+    #     return None
+    # text = re.sub(r"[^0-9.]", "", raw_text)
+    # dot = re.search(r"\.", text)
+    # if dot:
+    #     dot_char = dot.span()[1]
+    #     text = text[0:dot_char] + re.sub(r"\.", "", text[dot_char:])
+
+    # try:
+    #     return float(text)
+    # except Exception as e:
+    #     print(f"Couldn't parse {text} (raw: {raw_text}) as float with error: {e}")
+    # return None
+
     if raw_text == None:
         return None
-    text = re.sub(r"[^0-9.]", "", raw_text)
-    dot = re.search(r"\.", text)
-    if dot:
-        dot_char = dot.span()[1]
-        text = text[0:dot_char] + re.sub(r"\.", "", text[dot_char:])
+    text = re.sub(r"[^0-9]", "", raw_text)
 
     try:
-        return float(text)
+        return int(text)
     except Exception as e:
-        print(f"Couldn't parse {text} (raw: {raw_text}) as float with error: {e}")
+        logging.warn(f"Couldn't parse {text} (raw: {raw_text}) as int with error: {e}")
     return None
 
-def StripToBool(text: str):
-    if text == None:
+def StripToBool(raw_text: str):
+    if raw_text == None:
         return None
-    text = re.sub("[^a-z]", "", text.lower())
+    text = re.sub("[^yesno]", "", raw_text.lower())
     if "yes" in text:
         return True
     elif "no" in text:
         return False
+    logging.warn(f"Couldn't parse \"{text}\" (raw: \"{raw_text}\") to bool")
     return None
 
 def StripToEnum(text: str, enum: enum.Enum):
@@ -120,8 +132,8 @@ def StripToEnum(text: str, enum: enum.Enum):
             best_match = v
     
     if best_match != None and accuracy > 50:
-        print(f"Couldn't find {text} in {enum} Falling back to {best_match} with accuracy of {best_accuracy}")
+        logging.warn(f"Couldn't find {text} in {enum} Falling back to {best_match} with accuracy of {best_accuracy}")
         return best_match
     
-    print(f"Couldn't find {text} in {enum}")
+    logging.warn(f"Couldn't find {text} in {enum}")
     return None

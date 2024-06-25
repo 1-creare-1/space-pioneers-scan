@@ -4,3 +4,5 @@ pytesseract
 PyAutoGUI
 PyDirectInput
 fuzzywuzzy
+tabulate
+keyboard
